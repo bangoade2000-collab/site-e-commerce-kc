@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adélaïde KC Momo — Glaces Artisanales</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<div id="cart-modal" class="cart-modal hidden">
+  <div class="cart-content">
+    <h2>Votre panier</h2>
+    <ul id="cart-items"></ul>
+    <p id="cart-total"></p>
+    <button id="send-whatsapp">Envoyer via WhatsApp</button>
+    <button id="send-email">Envoyer par Email</button>
+    <button id="close-cart">Fermer</button>
+  </div>
+</div>
+
+<body>
+  <header>
+    <div class="header-container">
+      <div>
+        <h1>Adélaïde KC Momo — Ice Cream</h1>
+        <p>Cornets & gobelets • Pour anniversaires & mariages</p>
+      </div>
+      <button id="open-cart">Panier <span id="cart-count">0</span></button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-text">
+        <h2>Des crèmes glacées artisanales — Dès 500 F</h2>
+        <p>Choix de parfums variés • Livraison pour événements • Contactez-nous : 0150105004</p>
+        <div class="hero-buttons">
+          <a href="#products" class="btn-primary">Voir les produits</a>
+          <a href="#contact" class="btn-secondary">Contact</a>
+        </div>
+      </div>
+      <img src="images/ice1.jpeg" alt="Crème glacée cornet" class="hero-img">
+    </div>
+  </section>
+
+  <section id="products" class="products">
+    <h2>Nos crèmes glacées</h2>
+    <div class="product-grid">
+      <div class="product-card">
+        <img src="images/ice2.jpeg" alt="Crème vanille">
+        <h3>Vanille Royale</h3>
+        <p>Crème glacée vanille 250ml — faite maison</p>
+        <div class="price-add">
+          <span class="price">500 F</span>
+          <button class="add-btn">Ajouter</button>
+        </div>
+      </div>
+      <div class="product-card">
+        <img src="images/ice3.jpeg" alt="Crème chocolat">
+        <h3>Chocolat Intense</h3>
+        <p>Chocolat noir onctueux — cornet ou gobelet</p>
+        <div class="price-add">
+          <span class="price">500 F</span>
+          <button class="add-btn">Ajouter</button>
+        </div>
+      </div>
+      <div class="product-card">
+        <img src="images/ice4.jpeg" alt="Crème fraise">
+        <h3>Fraise Fraîche</h3>
+        <p>Sorbet fraise préparé avec des fruits locaux</p>
+        <div class="price-add">
+          <span class="price">500 F</span>
+          <button class="add-btn">Ajouter</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contactez-nous</h2>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Adélaïde KC Momo</h3>
+        <p><strong>Téléphone :</strong> 0150105004</p>
+        <p>Services : anniversaires, mariages, baptêmes</p>
+        <p><strong>Prix unitaire :</strong> 500 F</p>
+      </div>
+      <form class="contact-form">
+        <label>Nom</label>
+        <input type="text" required>
+        <label>Message</label>
+        <textarea rows="4" required></textarea>
+        <button type="submit">Envoyer</button>
+      </form>
+    </div>
+  </section>
+  
+  <script>
+    // Compteur du panier
+    let cartCount = 0;
+    const cartCountSpan = document.getElementById("cart-count");
+    const addButtons = document.querySelectorAll(".add-btn");
+
+    addButtons.forEach(button => {
+     button.addEventListener("click", () => {
+       cartCount++;
+       cartCountSpan.textContent = cartCount;
+       alert("Glace ajoutée au panier !");
+     });
+    });
+  </script>
+
+  <script>
+    let cart = [];
+    const cartCountSpan = document.getElementById("cart-count");
+    const cartItemsList = document.getElementById("cart-items");
+    const cartTotal = document.getElementById("cart-total");
+    const cartModal = document.getElementById("cart-modal");
+    const closeCart = document.getElementById("close-cart");
+
+    // Ajouter au panier
+    document.querySelectorAll(".product-card").forEach(card => {
+      card.querySelector(".add-btn").addEventListener("click", () => {
+        const name = card.querySelector("h3").textContent;
+        const price = parseInt(card.querySelector(".price").textContent);
+      
+        const existingItem = cart.find(item => item.name === name);
+        if (existingItem) {
+          existingItem.quantity++;
+        } else {
+          cart.push({ name, price, quantity: 1 });
+        }
+      
+        updateCart();
+      });
+    });
+
+    // Ouvrir le panier
+    document.getElementById("open-cart").addEventListener("click", () => {
+      renderCart();
+      cartModal.classList.remove("hidden");
+    });
+
+    // Fermer le panier
+    closeCart.addEventListener("click", () => {
+      cartModal.classList.add("hidden");
+    });
+
+    function updateCart() {
+      let totalItems = 0;
+      cart.forEach(item => totalItems += item.quantity);
+      cartCountSpan.textContent = totalItems;
+    }
+
+    function renderCart() {
+      cartItemsList.innerHTML = "";
+      let total = 0;
+      cart.forEach(item => {
+        total += item.price * item.quantity;
+        cartItemsList.innerHTML += `<li>${item.name} x${item.quantity} — ${item.price * item.quantity} F</li>`;
+      });
+      cartTotal.textContent = "Total : " + total + " F";
+    }
+  </script>
+
+  <script>
+    // ... (le reste du code)
+
+    document.getElementById("send-whatsapp").addEventListener("click", () => {
+      let message = "Nouvelle commande:%0A";
+      cart.forEach(item => {
+        message += `${item.name} x${item.quantity} = ${item.price * item.quantity} F%0A`;
+      });
+      message += cartTotal.textContent;
+      window.open(`https://wa.me/2250779165149?text=${message}`, "_blank");
+    });
+
+    document.getElementById("send-email").addEventListener("click", () => {
+      let message = "Nouvelle commande:%0A";
+      cart.forEach(item => {
+        message += `${item.name} x${item.quantity} = ${item.price * item.quantity} F%0A`;
+      });
+      message += cartTotal.textContent;
+      window.location.href = `mailto:bangoade2000@gmail.com?subject=Commande Glace&body=${message}`;
+    });
+  </script>
+
+  <footer>
+    <p>© 2025 Adélaïde KC Momo — Glaces artisanales • Prix indicatif 500 F</p>
+  </footer>
+</body>
+</html>
